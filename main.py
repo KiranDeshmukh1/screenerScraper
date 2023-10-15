@@ -3,6 +3,17 @@ import requests
 import lxml
 import pandas as pd
 
+def get_valid_response(urls):
+    for url in urls:
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            return response
+        except requests.exceptions.RequestException:
+            # If there's an error, proceed to the next URL
+            pass
+    return None
+
 
 def fetch_fd_data (symbols,key=None):
     
@@ -17,28 +28,17 @@ def fetch_fd_data (symbols,key=None):
     
     for symbol in symbols:
         results = {}
-
-    
-
-        urls = [f'https://www.screener.in/company/{symbol}/',f'https://www.screener.in/company/{symbol}/consolidated/']
-
-        for url in urls:
-            try:
-                response = requests.get(url)
-                response.raise_for_status()
-                break
-            except requests.exceptions.RequestException:
-                # If there's an error, proceed to the next URL
-                pass
-
-
-        #page = requests.get(url) 
+        
+        urls = [f'https://www.screener.in/company/{symbol}/', f'https://www.screener.in/company/{symbol}/consolidated/']
+        response = get_valid_response(urls)
+        if response is None:
+            continue
+         
 
         soup = BeautifulSoup(response.text,'html.parser')
 
-        for i in range (7):
+        for i, table in enumerate(soup.find_all('table', class_='data-table')):
 
-            table = soup.find_all('table',class_ = 'data-table')[i]
 
             column_header_raw = table.find_all('th')
 
@@ -70,5 +70,4 @@ def fetch_fd_data (symbols,key=None):
         
     else:
         return None
-
 
