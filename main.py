@@ -70,4 +70,3 @@ def fetch_fd_data (symbols,key=None):
         
     else:
         return None
-
