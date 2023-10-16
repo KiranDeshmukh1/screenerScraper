@@ -3,6 +3,10 @@ import requests
 import lxml
 import pandas as pd
 
+
+### -- Get Response -- ######
+
+
 def get_valid_response(urls):
     for url in urls:
         try:
@@ -15,7 +19,11 @@ def get_valid_response(urls):
     return None
 
 
-def fetch_fd_data (symbols,key=None):
+
+##### ------ Fundamentals -------#######
+
+
+def fundamentals(symbols,key=None):
     
     if not isinstance(symbols, list):
         symbols = [symbols]  # Convert a single symbol to a list
@@ -71,4 +79,53 @@ def fetch_fd_data (symbols,key=None):
     else:
         return None
     
-    #whycant i change
+    
+####### --- Sector and Industry -- #########
+
+def Sector(symbols):
+    
+    if not isinstance(symbols, list):
+        symbols = [symbols]  # Convert a single symbol to a list
+    
+    all_results = {}
+    
+    for symbol in symbols:
+        results = {}
+        key = None
+        urls = [f'https://www.screener.in/company/{symbol}/', f'https://www.screener.in/company/{symbol}/consolidated/']
+        response = get_valid_response(urls)
+        if response is None:
+            continue
+        
+        soup = BeautifulSoup(response.text,'html.parser')
+        rawhtml = soup.find_all('p',class_="sub")
+        rawdata = [headers.text.strip() for headers in rawhtml]
+        
+        filterdata_list = []
+        for lines in rawdata:
+            splitdata = lines.split('\n')
+            filterdata = [s for s in splitdata if s.strip()]
+            filterdata1 = [string.strip() for string in filterdata]
+            filterdata_list.extend(filterdata1)
+        
+        
+        for line in filterdata_list:
+            if line.startswith('Sector'):
+                key = 'Sector'
+            elif line.startswith('Industry'):
+                key = 'Industry'
+            elif key is not None:
+                results[key]= line.strip()
+                key = None
+            else:
+                pass
+         
+        all_results[symbol]= results
+        
+     
+    df = pd.DataFrame(all_results).T     
+    return df   
+
+
+
+#------------         ----#########
