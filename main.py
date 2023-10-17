@@ -119,13 +119,10 @@ def Sector(symbols):
                 key = None
             else:
                 pass
-         
+        results['Symbol'] = symbol 
         all_results[symbol]= results
-        
-     
-    df = pd.DataFrame(all_results).T     
+    
+    
+    df = pd.DataFrame(all_results).T
     return df   
 
-
-
-#------------         ----#########
