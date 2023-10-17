@@ -28,9 +28,9 @@ def fundamentals(symbols,key=None):
     if not isinstance(symbols, list):
         symbols = [symbols]  # Convert a single symbol to a list
    
-    keys = ['quarterly_results', 'pnl_yearly','balance_sheet', 
-            'cashflow', 'ratios', 'shareholding_pattern_quarterly', 
-            'shareholding_pattern_yearly']
+    keys = ['Quarterly Results', 'Profit & Loss','Balance Sheet', 
+            'Cash Flows', 'Ratios', 'Shareholding Pattern q', 
+            'Shareholding Pattern y']
     
     all_results = {}
     
@@ -126,3 +126,6 @@ def Sector(symbols):
     df = pd.DataFrame(all_results).T
     return df   
 
+
+
+######-------- #####################
